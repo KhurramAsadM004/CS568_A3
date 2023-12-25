@@ -36,6 +36,7 @@ class NeuralNetwork():
         self.beta1 = 0.9
         self.beta2 = 0.999
         self.epsilon = 1e-8 
+        self.lmbda = 0.02
         
         self.weights_save_dir = args.weights_save_dir        
         self.mode = args.mode
@@ -150,6 +151,9 @@ class NeuralNetwork():
             loss = f_utils.mse(self, y, batch_target)
         elif self.loss == 'mce':
             loss = f_utils.mce(self, y, batch_target) 
+            N = batch_target.shape[1]
+            weights_penalty = (self.lmbda / 2 * N) * np.sum(np.square(self.parameters))
+            loss = loss + weights_penalty
         elif self.loss == 'bce':
             loss = f_utils.bce(self, y, batch_target) 
         return loss
